@@ -1,3 +1,4 @@
+// RoleItem.tsx
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { roleService } from '../services/roleService';
@@ -8,7 +9,6 @@ interface RoleItemProps {
   permissions: Permission[];
 }
 
-// 获取本地存储的权限设置
 const getStoredPermissions = (roleId: string): string[] => {
   try {
     const stored = localStorage.getItem(`permissions-${roleId}`);
@@ -18,7 +18,6 @@ const getStoredPermissions = (roleId: string): string[] => {
   }
 };
 
-// 保存权限设置到本地存储
 const storePermissions = (roleId: string, permissions: string[]) => {
   localStorage.setItem(`permissions-${roleId}`, JSON.stringify(permissions));
 };
@@ -26,15 +25,22 @@ const storePermissions = (roleId: string, permissions: string[]) => {
 export const RoleItem = ({ role, permissions }: RoleItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedPermIds, setSelectedPermIds] = useState<string[]>([]);
+  const [mergedPermissions, setMergedPermissions] = useState<Permission[]>([]);
   const queryClient = useQueryClient();
+
+  // 合并服务端数据和本地存储数据
+  useEffect(() => {
+    const storedIds = getStoredPermissions(role.id);
+    const effectiveIds = storedIds.length > 0 ? storedIds : role.permissions.map(p => p.id);
+    const effectivePermissions = permissions.filter(p => effectiveIds.includes(p.id));
+    setMergedPermissions(effectivePermissions);
+  }, [role, permissions]);
 
   useEffect(() => {
     if (isEditing) {
-      // 优先使用本地存储的权限设置
-      const stored = getStoredPermissions(role.id);
-      setSelectedPermIds(stored || role.permissions.map(p => p.id));
+      setSelectedPermIds(mergedPermissions.map(p => p.id));
     }
-  }, [isEditing, role.id, role.permissions]);
+  }, [isEditing, mergedPermissions]);
 
   const mutation = useMutation<
     Role,
@@ -44,8 +50,9 @@ export const RoleItem = ({ role, permissions }: RoleItemProps) => {
     mutationFn: (selectedPermissions: Permission[]) => 
       roleService.setPermissionsForRole(role.id, selectedPermissions),
     onSuccess: (updatedRole) => {
-      // 更新成功后同步到本地存储
-      storePermissions(role.id, updatedRole.permissions.map(p => p.id));
+      const newIds = updatedRole.permissions.map(p => p.id);
+      storePermissions(role.id, newIds);
+      setMergedPermissions(updatedRole.permissions);
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       setIsEditing(false);
     },
@@ -60,8 +67,6 @@ export const RoleItem = ({ role, permissions }: RoleItemProps) => {
   };
 
   const handleCancel = () => {
-    // 清除未保存的本地修改
-    localStorage.removeItem(`permissions-${role.id}`);
     setIsEditing(false);
   };
 
@@ -72,11 +77,11 @@ export const RoleItem = ({ role, permissions }: RoleItemProps) => {
       {!isEditing ? (
         <div>
           <h3>Current Permissions</h3>
-          {role.permissions.length === 0 ? (
+          {mergedPermissions.length === 0 ? (
             <p>No permissions assigned</p>
           ) : (
             <ul>
-              {role.permissions.map(p => <li key={p.id}>{p.name}</li>)}
+              {mergedPermissions.map(p => <li key={p.id}>{p.name}</li>)}
             </ul>
           )}
           <button onClick={() => setIsEditing(true)}>Edit Permissions</button>
@@ -95,7 +100,6 @@ export const RoleItem = ({ role, permissions }: RoleItemProps) => {
                       ? [...selectedPermIds, p.id]
                       : selectedPermIds.filter(id => id !== p.id);
                     setSelectedPermIds(newIds);
-                    // 实时保存修改到本地存储
                     storePermissions(role.id, newIds);
                   }}
                 />
