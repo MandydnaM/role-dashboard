@@ -8,34 +8,61 @@ interface RoleItemProps {
   permissions: Permission[];
 }
 
+// 获取本地存储的权限设置
+const getStoredPermissions = (roleId: string): string[] => {
+  try {
+    const stored = localStorage.getItem(`permissions-${roleId}`);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+};
+
+// 保存权限设置到本地存储
+const storePermissions = (roleId: string, permissions: string[]) => {
+  localStorage.setItem(`permissions-${roleId}`, JSON.stringify(permissions));
+};
+
 export const RoleItem = ({ role, permissions }: RoleItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedPermIds, setSelectedPermIds] = useState<string[]>([]);
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (isEditing) setSelectedPermIds(role.permissions.map(p => p.id));
-  }, [isEditing, role.permissions]);
+    if (isEditing) {
+      // 优先使用本地存储的权限设置
+      const stored = getStoredPermissions(role.id);
+      setSelectedPermIds(stored || role.permissions.map(p => p.id));
+    }
+  }, [isEditing, role.id, role.permissions]);
 
-const mutation = useMutation<
-  Role,        // 返回数据类型（setPermissionsForRole返回的Promise<Role>）
-  Error,       // 错误类型
-  Permission[] // 参数类型（selectedPermissions的类型）
->({
-  mutationFn: (selectedPermissions: Permission[]) => 
-    roleService.setPermissionsForRole(role.id, selectedPermissions),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['roles'] }); // 注意queryKey格式
-    setIsEditing(false);
-  },
-  onError: (error: Error) => {
-    alert(`Error updating permissions: ${error.message}`);
-  }
-});
+  const mutation = useMutation<
+    Role,
+    Error,
+    Permission[]
+  >({
+    mutationFn: (selectedPermissions: Permission[]) => 
+      roleService.setPermissionsForRole(role.id, selectedPermissions),
+    onSuccess: (updatedRole) => {
+      // 更新成功后同步到本地存储
+      storePermissions(role.id, updatedRole.permissions.map(p => p.id));
+      queryClient.invalidateQueries({ queryKey: ['roles'] });
+      setIsEditing(false);
+    },
+    onError: (error: Error) => {
+      alert(`Error updating permissions: ${error.message}`);
+    }
+  });
 
   const handleSave = () => {
     const selectedPermissions = permissions.filter(p => selectedPermIds.includes(p.id));
     mutation.mutate(selectedPermissions);
+  };
+
+  const handleCancel = () => {
+    // 清除未保存的本地修改
+    localStorage.removeItem(`permissions-${role.id}`);
+    setIsEditing(false);
   };
 
   return (
@@ -68,6 +95,8 @@ const mutation = useMutation<
                       ? [...selectedPermIds, p.id]
                       : selectedPermIds.filter(id => id !== p.id);
                     setSelectedPermIds(newIds);
+                    // 实时保存修改到本地存储
+                    storePermissions(role.id, newIds);
                   }}
                 />
                 {p.name}
@@ -82,7 +111,7 @@ const mutation = useMutation<
               {mutation.isPending ? 'Saving...' : 'Save Changes'}
             </button>
             <button 
-              onClick={() => setIsEditing(false)}
+              onClick={handleCancel}
               disabled={mutation.isPending}
             >
               Cancel
