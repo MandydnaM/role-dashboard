@@ -1,0 +1,11 @@
+.role-list {
+    // max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .role-card{
+        display: flex;
+        justify-content: space-between;
+    }
+}

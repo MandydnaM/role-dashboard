@@ -1,8 +1,9 @@
 // RoleItem.tsx
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { roleService } from '../services/roleService';
-import { Role, Permission } from '../types/role';
+import { roleService } from '../../services/roleService';
+import { Role, Permission } from '../../types/role';
+import './roleItem.scss'
 
 interface RoleItemProps {
   role: Role;

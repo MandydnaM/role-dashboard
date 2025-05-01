@@ -1,19 +1,25 @@
 import { useQuery } from '@tanstack/react-query';
-import { roleService } from '../services/roleService';
-import { RoleItem } from './RoleItem';
-import { Role, Permission } from '../types/role';
+import { roleService } from '../../services/roleService';
+import { RoleItem } from '../roleItem/RoleItem';
+import { Role, Permission } from '../../types/role';
+import './roleList.scss'
 
 export const RoleList = () => {
-  const { data: roles, isLoading: rolesLoading, error: rolesError } = useQuery<Role[], Error>({
-  queryKey: ['roles'],          // 必须使用数组形式的queryKey
+  const { 
+    data: roles, 
+    isLoading: rolesLoading, 
+    error: rolesError 
+  } = useQuery<Role[], Error>({
+  queryKey: ['roles'],          
   queryFn: () => roleService.getRoles()
 });
+
   const { 
   data: permissions, 
   isLoading: permsLoading, 
   error: permsError 
-} = useQuery<Permission[], Error>({  // 添加 Error 类型参数
-  queryKey: ['permissions'],        // 使用数组格式的queryKey
+} = useQuery<Permission[], Error>({  
+  queryKey: ['permissions'],        
   queryFn: () => roleService.getPermissions()
 });
 
@@ -24,9 +30,11 @@ export const RoleList = () => {
   return (
     <div className="role-list">
       <h1>Role Permissions Management</h1>
-      {roles?.map((role) => (
+      <div className="role-card">
+        {roles?.map((role) => (
         <RoleItem key={role.id} role={role} permissions={permissions || []} />
       ))}
+      </div>
     </div>
   );
 };
