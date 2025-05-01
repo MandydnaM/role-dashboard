@@ -41,7 +41,7 @@ function App() {
       ]
     },
   ],
-    // { basename: "/role-dashboard" }
+    { basename: "/role-dashboard" }
   )
   return <RouterProvider router={router} />;
 }
