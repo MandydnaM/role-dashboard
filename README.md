@@ -1,7 +1,6 @@
 ## Key Features
 - View roles with assigned permissions 
 - Edit permissions through intuitive checkboxes
-- Local storage persistence for unsaved changes
 - Error handling with mock service failures
 - Clean UI with instant feedback
 
