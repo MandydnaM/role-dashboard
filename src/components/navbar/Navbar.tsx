@@ -1,4 +1,7 @@
-import './navbar.scss'
+import person from '../../assets/person.svg'
+import setting from '../../assets/setting.svg'
+import message from '../../assets/message.svg'
+import './navbar.scss';
 
 
 function Navbar() {
@@ -9,14 +12,14 @@ function Navbar() {
             </div>
             <div className="icons">
                 <div className="user">
-                    <img src="person.svg" alt="" />
+                    <img src={person} alt="" />
                     <span>admin</span>
                 </div>
-                    <img src="setting.svg" alt="" />
-                    <img src="message.svg" alt="" className="icon" />
+                    <img src={setting} alt="" />
+                    <img src={message} alt="" className="icon" />
             </div>
         </div>
     )
 }
 
-export default Navbar
+export default Navbar;

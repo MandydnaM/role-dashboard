@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { roleService } from '../../services/roleService';
-import { RoleItem } from '../roleItem/RoleItem';
+import RoleItem from '../roleItem/RoleItem';
 import { Role, Permission } from '../../types/role';
-import './roleList.scss'
+import './roleList.scss';
 
-export const RoleList = () => {
+const RoleList = () => {
   const { 
     data: roles, 
     isLoading: rolesLoading, 
@@ -38,3 +38,5 @@ export const RoleList = () => {
     </div>
   );
 };
+
+export default RoleList;

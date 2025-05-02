@@ -1,5 +1,5 @@
-import './menu.scss'
-import { Link } from "react-router-dom"
+import './menu.scss';
+import { Link } from "react-router-dom";
 
 const menu = [
     {
@@ -46,4 +46,4 @@ function Menu() {
     )
 }
 
-export default Menu
+export default Menu;
