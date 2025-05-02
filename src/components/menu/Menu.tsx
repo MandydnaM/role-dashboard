@@ -22,9 +22,9 @@ const menu = [
                 title: "Others",
                 url: "/lists",
                 icon: "icon-personnel.svg",
-            },          
+            },
         ],
-    }, 
+    },
 ];
 
 

@@ -5,23 +5,23 @@ import { Role, Permission } from '../../types/role';
 import './roleList.scss';
 
 const RoleList = () => {
-  const { 
-    data: roles, 
-    isLoading: rolesLoading, 
-    error: rolesError 
+  const {
+    data: roles,
+    isLoading: rolesLoading,
+    error: rolesError
   } = useQuery<Role[], Error>({
-  queryKey: ['roles'],          
-  queryFn: () => roleService.getRoles()
-});
+    queryKey: ['roles'],
+    queryFn: () => roleService.getRoles()
+  });
 
-  const { 
-  data: permissions, 
-  isLoading: permsLoading, 
-  error: permsError 
-} = useQuery<Permission[], Error>({  
-  queryKey: ['permissions'],        
-  queryFn: () => roleService.getPermissions()
-});
+  const {
+    data: permissions,
+    isLoading: permsLoading,
+    error: permsError
+  } = useQuery<Permission[], Error>({
+    queryKey: ['permissions'],
+    queryFn: () => roleService.getPermissions()
+  });
 
   if (rolesLoading || permsLoading) return <div>Loading...</div>;
   if (rolesError) return <div>Error loading roles: {(rolesError as Error).message}</div>;
@@ -32,8 +32,8 @@ const RoleList = () => {
       <h1>Role Permissions Management</h1>
       <div className="role-card">
         {roles?.map((role) => (
-        <RoleItem key={role.id} role={role} permissions={permissions || []} />
-      ))}
+          <RoleItem key={role.id} role={role} permissions={permissions || []} />
+        ))}
       </div>
     </div>
   );

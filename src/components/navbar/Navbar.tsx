@@ -15,8 +15,8 @@ function Navbar() {
                     <img src={person} alt="" />
                     <span>admin</span>
                 </div>
-                    <img src={setting} alt="" />
-                    <img src={message} alt="" className="icon" />
+                <img src={setting} alt="" />
+                <img src={message} alt="" className="icon" />
             </div>
         </div>
     )
