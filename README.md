@@ -1,3 +1,6 @@
+## Deployed Page
+- [role dashboard](https://mandydnam.github.io/role-dashboard/)
+
 ## Key Features
 - View roles with assigned permissions 
 - Edit permissions through intuitive checkboxes
