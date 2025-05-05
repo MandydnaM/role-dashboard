@@ -46,7 +46,7 @@ const RoleItem = ({ role, permissions }: RoleItemProps) => {
   };
 
   const ViewMode = () => (
-    <div>
+    <div className='view-section'>
       <h3>Current Permissions</h3>
       {role.permissions.length === 0 ? (
         <p>No permissions assigned</p>
@@ -55,7 +55,7 @@ const RoleItem = ({ role, permissions }: RoleItemProps) => {
           {role.permissions.map(p => <li key={p.id}>{p.name}</li>)}
         </ul>
       )}
-      <button onClick={() => setIsEditing(true)}>Edit Permissions</button>
+      <button onClick={() => setIsEditing(true)} className='edit-btn'>Edit Permissions</button>
     </div>
   );
 

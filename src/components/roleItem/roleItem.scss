@@ -3,8 +3,8 @@
     border-radius: 8px;
     padding: 20px;
     background-color: #fff;
-    width: 250px;
-    height: 360px;
+    // width: 250px;
+    height: 340px;
 }
 
 .current-permissions li {
@@ -18,6 +18,10 @@
     margin-top: 15px;
     padding-top: 15px;
     border-top: 1px solid #eee;
+}
+
+.edit-section h3 {
+    margin: 0;
 }
 
 .permissions-grid {
@@ -59,6 +63,20 @@ button:disabled {
 button:hover:not(:disabled) {
     opacity: 0.9;
 }
+
+.view-section {
+    position: relative;
+    height: 280px;
+}
+
+.edit-btn {
+    position: absolute;
+    // right: 50%;
+    bottom: 35px;
+    width: 150px;
+    // transform: translateX(75px);
+}
+
 
 .error-message {
     color: #dc3545;
